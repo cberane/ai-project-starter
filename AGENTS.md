@@ -37,6 +37,28 @@ All output — code, comments, commit messages, PR descriptions, documentation, 
 | Install skill into a project | `node bin/ai-project-starter.js /path/to/project` |
 | Dogfood (user-level) | `node bin/ai-project-starter.js --user` |
 
+## Versioning and releases
+
+This project follows **semantic versioning** (`major.minor.patch`). Three version locations must always match:
+
+1. `package.json` → `version`
+2. `skills/setup-project/references/VERSION`
+3. the git tag `v{version}`
+
+What counts as what (while pre-1.0, i.e. `0.x.y`):
+
+- **patch** (`0.1.x` → `0.1.x+1`): bug fixes, docs, CI, internal refactors — no change to the installer's flags or the skill's interview flow, question catalog, or generated output
+- **minor** (`0.x.0` → `0.x+1.0`): new features (new flag, new interview question, new template or role) and any breaking change — breaking changes must be called out in the changelog entry
+- **major**: reserved for the 1.0 release and beyond
+
+Rules for every change set:
+
+1. **Fill `CHANGELOG.md` while you work** — add entries under `[Unreleased]` (Added / Changed / Fixed). Never leave notable changes unrecorded.
+2. **Increase the version as necessary** per the table above, in `package.json` and `references/VERSION` together, in the same change.
+3. **Fix the installer pin in `README.md` and `docs/INSTALL.md`** — the `npx github:cberane/ai-project-starter#v{version}` example must always show the latest released tag.
+4. **Release procedure**: move `[Unreleased]` to `## [v{version}] - YYYY-MM-DD` in the changelog → commit → push to GitHub → tag the pushed commit `v{version}` → create the GitHub release from that tag. The tag must always match the pin shown in `README.md`.
+5. **Never move or delete a published tag.** If a release turns out broken, fix forward with a new patch release.
+
 ## Workflow
 
 Direct mode: one task at a time, spec-driven via `specs/` (SPEC → PLAN → TASK). Verify before finishing: `node --check`, `bash -n`, and a smoke test of the installer in a scratch directory for any installer change.
@@ -48,3 +70,4 @@ Direct mode: one task at a time, spec-driven via `specs/` (SPEC → PLAN → TAS
 - Installer smoke test in a scratch dir (install, rerun for no-op, upgrade path)
 - No attribution strings anywhere: `grep -riE 'co-authored-by|generated with' .` returns nothing
 - English only in all changed files
+- Version locations in sync: `package.json` == `references/VERSION` == latest tag; `README.md` and `docs/INSTALL.md` pins show the latest tag
