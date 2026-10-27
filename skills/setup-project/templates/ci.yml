@@ -8,9 +8,9 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # NOTE: replace with the setup step for the project's language
       - name: Install dependencies
         run: {{cmd_install}}
@@ -18,9 +18,9 @@ jobs:
         run: {{cmd_lint}}
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # NOTE: replace with the setup step for the project's language
       - name: Install dependencies
         run: {{cmd_install}}
