@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Syntax checks
+        run: |
+          node --check bin/ai-project-starter.js
+          bash -n install.sh
+          shellcheck install.sh
+
+      - name: Token and condition validator
+        run: node scripts/check.mjs
+
+      - name: Installer smoke test
+        run: |
+          mkdir -p /tmp/smoke/.claude /tmp/smoke/.vibe
+          node bin/ai-project-starter.js --detect-only /tmp/smoke
+          node bin/ai-project-starter.js /tmp/smoke
+          node bin/ai-project-starter.js /tmp/smoke  # rerun must be a no-op
+          test -f /tmp/smoke/.claude/skills/setup-project/SKILL.md
+          test -f /tmp/smoke/.vibe/skills/setup-project/SKILL.md
+
+      - name: No AI attribution lines
+        # Catches actual attribution (commit trailers, generated-with
+        # footers) while allowing the rule text that forbids them.
+        run: |
+          ! grep -rnE '^(Co-Authored-By:|🤖)' \
+            --include='*.md' --include='*.js' --include='*.mjs' --include='*.sh' --include='*.yml' --include='*.json' .
+          ! grep -rn 'Generated with \[' \
+            --include='*.md' --include='*.js' --include='*.mjs' --include='*.sh' --include='*.yml' --include='*.json' .
+
+      - name: English only (no German umlauts in content files)
+        run: |
+          ! grep -rn '[äöüß]' --include='*.md' --include='*.js' --include='*.sh' skills/ bin/ docs/
