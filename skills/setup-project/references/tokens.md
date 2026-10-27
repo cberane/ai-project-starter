@@ -80,7 +80,6 @@ Templates contain `<!-- IF:condition -->…<!-- ENDIF -->` blocks. Expand (keep 
 | `IF:ci` | ci_enabled |
 | `IF:feature_branches` | git_rules.branch_policy == feature_branches |
 | `IF:no_attribution` | git_rules.no_ai_attribution |
-| `IF:attribution_allowed` | git_rules.no_ai_attribution is false |
 | `IF:changelog` / `IF:adr` | docs_level standard/full |
 | `IF:role_ui_designer` | agent_roles includes ui_designer |
 | `IF:role_file_worker` | agent_roles includes file_worker |
@@ -97,6 +96,8 @@ Templates contain `<!-- IF:condition -->…<!-- ENDIF -->` blocks. Expand (keep 
 ## ELSE blocks
 
 `<!-- IF:condition -->A<!-- ELSE -->B<!-- ENDIF -->` renders as A when the condition is true, as B when false. Plain `<!-- IF:… -->…<!-- ENDIF -->` (no ELSE) drops the whole block when false. Use ELSE sparingly — only when both branches carry real content.
+
+**Never nest IF blocks.** Flatten templates instead: independent rules each get their own small IF block.
 
 ## Rendering rules
 

@@ -27,10 +27,11 @@ This file is the **single source of truth** for every AI agent working in this r
 
 All output — code, comments, commit messages, PR descriptions, documentation, and conversation — is **English only**, even if the user prompts in another language.
 
-<!-- IF:no_attribution -->
 ## Git rules
 
+<!-- IF:no_attribution -->
 - **No AI attribution, ever.** Do not add `Co-Authored-By:` trailers, "Generated with …", "Made with AI", or any similar attribution to commit messages or PR descriptions. Commit messages must read as if written by the user alone.
+<!-- ENDIF -->
 - **Commit style:** conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
 - **Branching:** work on feature branches (short, descriptive names); merge to main through PRs.
 <!-- IF:feature_branches -->
@@ -38,16 +39,6 @@ All output — code, comments, commit messages, PR descriptions, documentation, 
 <!-- ENDIF -->
 - **Never modify git configuration.** Do not run `git config` write commands and never set or change `user.name`, `user.email`, or signing settings. If identity is missing, inform the user and let them set it.
 - Only commit when the user asks. Run the tests before every commit.
-<!-- ENDIF -->
-
-<!-- IF:attribution_allowed -->
-## Git rules
-
-- **Commit style:** conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
-- **Branching:** work on feature branches (short, descriptive names); merge to main through PRs.
-- **Never modify git configuration.** Do not run `git config` write commands and never set or change `user.name`, `user.email`, or signing settings. If identity is missing, inform the user and let them set it.
-- Only commit when the user asks. Run the tests before every commit.
-<!-- ENDIF -->
 
 ## Workflow: direct mode
 
