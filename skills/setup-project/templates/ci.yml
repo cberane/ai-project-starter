@@ -1,0 +1,29 @@
+<!-- IF:ci -->
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # NOTE: replace with the setup step for the project's language
+      - name: Install dependencies
+        run: {{cmd_install}}
+      - name: Lint
+        run: {{cmd_lint}}
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # NOTE: replace with the setup step for the project's language
+      - name: Install dependencies
+        run: {{cmd_install}}
+      - name: Test
+        run: {{cmd_test}}
+<!-- ENDIF -->

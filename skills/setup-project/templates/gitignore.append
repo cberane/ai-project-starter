@@ -1,0 +1,40 @@
+# --- ai-project-starter ---
+# build output
+dist/
+build/
+out/
+target/
+*.egg-info/
+__pycache__/
+
+# dependencies
+node_modules/
+.venv/
+venv/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# test / coverage output
+coverage/
+.pytest_cache/
+
+# editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+<!-- IF:lang_python -->
+# python
+*.pyc
+<!-- ENDIF -->
+<!-- IF:lang_javascript -->
+# javascript / typescript
+*.log
+.turbo/
+.next/
+<!-- ENDIF -->
+# --- end ai-project-starter ---
