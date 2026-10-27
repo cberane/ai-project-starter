@@ -1,0 +1,32 @@
+{
+  "name": "ai-project-starter",
+  "version": "0.1.0",
+  "description": "Interactive /setup-project skill that configures AI-assisted, spec-driven projects in any coding harness",
+  "bin": {
+    "ai-project-starter": "bin/ai-project-starter.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "install.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cberane/ai-project-starter.git"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "skill",
+    "setup",
+    "spec-driven",
+    "claude-code",
+    "vibe"
+  ]
+}
