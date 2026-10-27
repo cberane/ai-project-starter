@@ -92,6 +92,9 @@ function detectHarnesses(targetDir) {
 function ask(question, fallback) {
   return new Promise((resolve) => {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    // If stdin closes without an answer (EOF, non-interactive pipe), take the default
+    // instead of hanging. Double-resolve is harmless - promises settle once.
+    rl.on("close", () => resolve(fallback));
     rl.question(`${question} `, (answer) => {
       rl.close();
       const trimmed = answer.trim().toLowerCase();
