@@ -59,7 +59,7 @@ function printHelp() {
     "",
     "Options:",
     "  --harness <claude|vibe|all>  Override harness detection",
-    "  --detect-only                Print detected harnesses, install nothing",
+    "  --detect-only                Print detected harnesses (never prompts), install nothing",
     "  --force                      Overwrite an existing skill without prompting",
     "  --version                    Print the skill version and exit",
     "  -h, --help                   Show this help",
@@ -82,23 +82,39 @@ function fail(message) {
 function detectHarnesses(targetDir) {
   const found = [];
   for (const [name, dirs] of Object.entries(HARNESS_DIRS)) {
-    if (fs.existsSync(path.join(targetDir, dirs.project.split(path.sep)[0]))) {
-      found.push(name);
+    const marker = path.join(targetDir, dirs.project.split(path.sep)[0]);
+    try {
+      // Only a directory counts as a harness marker, not a stray file.
+      if (fs.statSync(marker).isDirectory()) found.push(name);
+    } catch {
+      // absent (or unreadable) - not detected
     }
   }
   return found;
 }
 
 function ask(question, fallback) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    // If stdin closes without an answer (EOF, non-interactive pipe), take the default
-    // instead of hanging. Double-resolve is harmless - promises settle once.
-    rl.on("close", () => resolve(fallback));
+    let settled = false;
+    const settle = (fn, value) => {
+      if (!settled) {
+        settled = true;
+        fn(value);
+      }
+    };
+    // Ctrl+C aborts the install; EOF / a closed pipe falls back to the default.
+    // Double-settle is guarded - promises settle once either way.
+    rl.on("SIGINT", () => {
+      process.stdout.write("\n");
+      settle(reject, new Error("aborted by user (Ctrl+C)"));
+      rl.close();
+    });
+    rl.on("close", () => settle(resolve, fallback));
     rl.question(`${question} `, (answer) => {
       rl.close();
       const trimmed = answer.trim().toLowerCase();
-      resolve(trimmed === "" ? fallback : trimmed);
+      settle(resolve, trimmed === "" ? fallback : trimmed);
     });
   });
 }
@@ -116,6 +132,23 @@ function copyDir(src, dest) {
   }
 }
 
+// Copy the skill to a temp dir, then swap it in. The destination stays intact
+// if the copy fails halfway (no half-installed skill that a later VERSION
+// check would mistake for complete), and the swap replaces the directory
+// wholesale, so files dropped upstream do not linger across upgrades.
+function replaceSkillDir(dest) {
+  const tmp = `${dest}.tmp-${process.pid}`;
+  fs.rmSync(tmp, { recursive: true, force: true });
+  try {
+    copyDir(skillSource, tmp);
+    fs.rmSync(dest, { recursive: true, force: true });
+    fs.renameSync(tmp, dest);
+  } catch (error) {
+    fs.rmSync(tmp, { recursive: true, force: true });
+    throw error;
+  }
+}
+
 function installedVersion(dest) {
   const vf = path.join(dest, "references", "VERSION");
   try {
@@ -123,6 +156,18 @@ function installedVersion(dest) {
   } catch {
     return null;
   }
+}
+
+// "upgraded" / "downgraded" when both versions parse as x.y.z, else "updated".
+function versionDirection(oldVersion, newVersion) {
+  const parse = (v) => (v.match(/^(\d+)\.(\d+)\.(\d+)$/) || []).map(Number).slice(1);
+  const a = parse(oldVersion);
+  const b = parse(newVersion);
+  if (a.length !== 3 || b.length !== 3) return "updated";
+  for (let i = 0; i < 3; i++) {
+    if (a[i] !== b[i]) return b[i] > a[i] ? "upgraded" : "downgraded";
+  }
+  return "updated";
 }
 
 async function installInto(destDir, harness, force) {
@@ -137,9 +182,12 @@ async function installInto(destDir, harness, force) {
       return { harness, changed: false };
     }
     if (old !== null && current !== "unknown") {
-      // straightforward upgrade of our own skill - no prompt needed
-      copyDir(skillSource, dest);
-      process.stdout.write(`  ${harness}: upgraded ${old} -> ${current}\n`);
+      // straightforward upgrade of our own skill - no prompt needed.
+      // The skill directory is replaced wholesale: local edits to it are lost.
+      replaceSkillDir(dest);
+      process.stdout.write(
+        `  ${harness}: ${versionDirection(old, current)} ${old} -> ${current} (existing skill directory replaced)\n`
+      );
       return { harness, changed: true };
     }
     const answer = await ask(
@@ -152,7 +200,7 @@ async function installInto(destDir, harness, force) {
     }
   }
 
-  copyDir(skillSource, dest);
+  replaceSkillDir(dest);
   process.stdout.write(`  ${harness}: installed ${readVersion()} -> ${dest}\n`);
   return { harness, changed: true };
 }
@@ -188,8 +236,11 @@ async function main() {
       if (!harnessFlag || !["claude", "vibe", "all"].includes(harnessFlag)) {
         fail("--harness expects claude, vibe, or all");
       }
-    } else if (arg.startsWith("--")) {
+    } else if (arg.startsWith("-")) {
+      // catches typos like -user or -force, not just unknown --flags
       fail(`unknown option: ${arg}`);
+    } else if (targetPath !== ".") {
+      fail(`unexpected argument: ${arg} (only one target path is allowed)`);
     } else {
       targetPath = arg;
     }
@@ -211,9 +262,17 @@ async function main() {
   if (harnessFlag === "all" || harnessFlag === "claude" || harnessFlag === "vibe") {
     harnesses = harnessFlag === "all" ? ["claude", "vibe"] : [harnessFlag];
   } else if (userMode) {
+    if (targetPath !== ".") {
+      process.stdout.write("Ignoring the target path: --user installs to user-level skill dirs.\n");
+    }
     harnesses = ["claude", "vibe"];
   } else {
     const detected = detectHarnesses(path.resolve(targetPath));
+    if (detectOnly) {
+      // never prompts - print what is actually there, even if it is nothing
+      process.stdout.write(`Harnesses: ${detected.length > 0 ? detected.join(", ") : "none detected"}\n`);
+      return;
+    }
     if (detected.length > 0) {
       harnesses = detected;
       process.stdout.write(`Detected harnesses: ${detected.join(", ")}\n`);
