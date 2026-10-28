@@ -29,14 +29,54 @@ jobs:
       - name: Token and condition validator
         run: node scripts/check.mjs
 
+      - name: Version sync
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [ "$v" = "$(cat skills/setup-project/references/VERSION)" ] \
+            || { echo "package.json ($v) != references/VERSION ($(cat skills/setup-project/references/VERSION))" >&2; exit 1; }
+          grep -q "npx github:cberane/ai-project-starter#v$v" README.md \
+            || { echo "README.md pin does not show v$v" >&2; exit 1; }
+          grep -q "npx github:cberane/ai-project-starter#v$v" docs/INSTALL.md \
+            || { echo "docs/INSTALL.md pin does not show v$v" >&2; exit 1; }
+
       - name: Installer smoke test
         run: |
+          v=$(cat skills/setup-project/references/VERSION)
           mkdir -p /tmp/smoke/.claude /tmp/smoke/.vibe
-          node bin/ai-project-starter.js --detect-only /tmp/smoke
-          node bin/ai-project-starter.js /tmp/smoke
-          node bin/ai-project-starter.js /tmp/smoke  # rerun must be a no-op
+          node bin/ai-project-starter.js --detect-only /tmp/smoke < /dev/null
+          node bin/ai-project-starter.js /tmp/smoke < /dev/null
+          node bin/ai-project-starter.js /tmp/smoke < /dev/null  # rerun must be a no-op
           test -f /tmp/smoke/.claude/skills/setup-project/SKILL.md
           test -f /tmp/smoke/.vibe/skills/setup-project/SKILL.md
+          # upgrade path: plant an old version and a stale file, then rerun
+          echo 0.0.1 > /tmp/smoke/.claude/skills/setup-project/references/VERSION
+          touch /tmp/smoke/.claude/skills/setup-project/stale-marker.md
+          node bin/ai-project-starter.js /tmp/smoke < /dev/null
+          [ "$(cat /tmp/smoke/.claude/skills/setup-project/references/VERSION)" = "$v" ] \
+            || { echo "upgrade did not restore version $v" >&2; exit 1; }
+          test ! -e /tmp/smoke/.claude/skills/setup-project/stale-marker.md \
+            || { echo "upgrade did not prune a stale file" >&2; exit 1; }
+          # detect-only never prompts, even with nothing detected
+          mkdir -p /tmp/smoke-empty
+          node bin/ai-project-starter.js --detect-only /tmp/smoke-empty < /dev/null | grep -q "none detected"
+          # --force overwrites a foreign skill without prompting
+          mkdir -p /tmp/smoke-force/.claude/skills/setup-project
+          echo foreign > /tmp/smoke-force/.claude/skills/setup-project/SKILL.md
+          node bin/ai-project-starter.js --force /tmp/smoke-force < /dev/null
+          test -f /tmp/smoke-force/.claude/skills/setup-project/references/VERSION
+
+      - name: User-level install smoke test
+        run: |
+          mkdir -p /tmp/user-home
+          HOME=/tmp/user-home node bin/ai-project-starter.js --user < /dev/null
+          test -f /tmp/user-home/.claude/skills/setup-project/SKILL.md
+          test -f /tmp/user-home/.vibe/skills/setup-project/SKILL.md
+
+      - name: install.sh smoke test
+        run: |
+          mkdir -p /tmp/shsmoke/.claude
+          sh install.sh /tmp/shsmoke
+          test -f /tmp/shsmoke/.claude/skills/setup-project/SKILL.md
 
       - name: No AI attribution lines
         # Catches actual attribution (commit trailers, generated-with
@@ -49,4 +89,4 @@ jobs:
 
       - name: English only (no German umlauts in content files)
         run: |
-          ! grep -rn '[äöüß]' --include='*.md' --include='*.js' --include='*.sh' skills/ bin/ docs/
+          ! grep -rn '[äöüß]' --include='*.md' README.md AGENTS.md CLAUDE.md CHANGELOG.md docs/ skills/ bin/

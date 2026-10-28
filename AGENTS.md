@@ -33,6 +33,7 @@ All output — code, comments, commit messages, PR descriptions, documentation, 
 |--------|---------|
 | Syntax check installer | `node --check bin/ai-project-starter.js` |
 | Shell syntax check | `bash -n install.sh` |
+| Validate template tokens and conditions | `node scripts/check.mjs` |
 | Installer help | `node bin/ai-project-starter.js --help` |
 | Install skill into a project | `node bin/ai-project-starter.js /path/to/project` |
 | Dogfood (user-level) | `node bin/ai-project-starter.js --user` |
@@ -67,7 +68,11 @@ Direct mode: one task at a time, spec-driven via `specs/` (SPEC → PLAN → TAS
 
 - `node --check bin/ai-project-starter.js`
 - `bash -n install.sh`
-- Installer smoke test in a scratch dir (install, rerun for no-op, upgrade path)
-- No attribution strings anywhere: `grep -riE 'co-authored-by|generated with' .` returns nothing
+- `node scripts/check.mjs`
+- Installer smoke test in a scratch dir (install, rerun for no-op, upgrade path, `--user`, `--force`)
+- No attribution lines anywhere (anchored, so the rule text itself does not match):
+  `grep -rnE '^(Co-Authored-By:|🤖)' --include='*.md' --include='*.js' --include='*.mjs' --include='*.sh' --include='*.yml' --include='*.json' .`
+  and `grep -rn 'Generated with \[' --include='*.md' --include='*.js' --include='*.mjs' --include='*.sh' --include='*.yml' --include='*.json' .`
+  both return nothing
 - English only in all changed files
 - Version locations in sync: `package.json` == `references/VERSION` == latest tag; `README.md` and `docs/INSTALL.md` pins show the latest tag
