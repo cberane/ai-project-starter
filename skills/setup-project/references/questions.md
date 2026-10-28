@@ -5,7 +5,7 @@ Every question is asked **one at a time**, with its default stated in the questi
 Prefill column: where the default comes from — always propose it, never assume it.
 
 ## 1. project_name
-- **Question:** "Project name? (default: `{{directory_or_repo_name}}`)"
+- **Question:** "Project name? (default: `<directory_or_repo_name>`)"
 - **Prefill:** current directory name, or the repo name from GITHUB_REPO_URL.
 - **Also derive** `project_slug` (lowercase, hyphens) for use in package names and paths.
 
@@ -19,7 +19,7 @@ Prefill column: where the default comes from — always propose it, never assume
 - **Follow-up:** none in v1; type drives the Phase 2 directory layout.
 
 ## 4. language_framework
-- **Question:** "Primary language and framework? (default: `{{scan_result}}`)"
+- **Question:** "Primary language and framework? (default: `<scan_result>`)"
 - **Prefill:** lockfiles and manifests (`package.json` → Node/JS-TS, `pyproject.toml`/`requirements.txt` → Python, `Cargo.toml` → Rust, `go.mod` → Go).
 - **If multiple detected:** ask which is primary.
 
@@ -80,6 +80,7 @@ Prefill column: where the default comes from — always propose it, never assume
 ## 16. docs_level
 - **Default:** README + changelog, no ADRs.
 - **Options:** minimal (README only) / standard (README + changelog) / full (README + changelog + ADRs in `docs/adr/`).
+- **Effect:** standard/full generate a `CHANGELOG.md` stub (`IF:changelog`); full also generates `docs/adr/TEMPLATE.md` (`IF:adr`).
 
 ## 17. commit_answers
 - **Question:** "Commit `.project-setup/answers.json` to the repository? It documents your setup decisions. (default: yes)"

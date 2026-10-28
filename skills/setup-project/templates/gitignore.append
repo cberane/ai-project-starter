@@ -27,6 +27,10 @@ coverage/
 .DS_Store
 Thumbs.db
 
+<!-- IF:ignore_answers -->
+# setup record (not committed by choice)
+.project-setup/
+<!-- ENDIF -->
 <!-- IF:lang_python -->
 # python
 *.pyc
@@ -36,5 +40,14 @@ Thumbs.db
 *.log
 .turbo/
 .next/
+<!-- ENDIF -->
+<!-- IF:lang_go -->
+# go
+*.test
+*.out
+<!-- ENDIF -->
+<!-- IF:lang_rust -->
+# rust
+**/*.rs.bk
 <!-- ENDIF -->
 # --- end ai-project-starter ---

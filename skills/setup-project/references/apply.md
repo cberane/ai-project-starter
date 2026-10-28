@@ -20,6 +20,8 @@ Generate in this order (skip harness-specific files for unselected harnesses; sk
 | `agents/roles/code-reviewer.md` | `templates/agents/code-reviewer.md` | only if role enabled |
 | `agents/roles/devops.md` | `templates/agents/devops.md` | only if role enabled |
 | `.gitignore` | `templates/gitignore.append` | marked-block append, never a full overwrite |
+| `CHANGELOG.md` | `templates/CHANGELOG.md` | only if docs_level is standard or full (IF:changelog) |
+| `docs/adr/TEMPLATE.md` | `templates/docs/adr.md` | only if docs_level is full (IF:adr) |
 | `README.md` | `templates/README.md` | only in Phase 2, or in Phase 1 for existing repos without one — ask |
 
 Never generate `.vibe/AGENTS.md` — vibe reads root `AGENTS.md` directly.
@@ -59,7 +61,7 @@ Append (or replace on re-run) exactly one block; never touch anything outside it
 # --- end ai-project-starter ---
 ```
 
-If `commit_answers` is false, the block includes `.project-setup/`.
+If `commit_answers` is false, the `IF:ignore_answers` block in `templates/gitignore.append` adds `.project-setup/` to the generated lines.
 
 ## Error protocol
 
@@ -84,7 +86,7 @@ On any failure (unreadable file, missing directory, git error): **Stop → Repor
 
 **Not done (deliberately)**
 - <e.g. "no git identity configured — set user.name/user.email yourself">
-- <e.g. "CI workflow is a stub — adjust jobs for {{language}}">
+- <e.g. "CI workflow is a stub — adjust jobs for {{language_framework}}">
 ```
 
 Keep it honest: everything not done goes under "Not done" with a reason. English only.

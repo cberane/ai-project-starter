@@ -8,7 +8,7 @@
 
 ```bash
 # install dependencies
-{{package_manager}} install
+{{cmd_install}}
 
 # run in dev mode
 {{cmd_dev}}
@@ -33,6 +33,12 @@ CI runs on every push and PR: {{ci_jobs}} (see `.github/workflows/ci.yml`).
 - `specs/` — spec-driven development artifacts (SPEC, PLAN, TASK)
 - `agents/roles/` — AI agent role definitions
 - `.project-setup/answers.json` — setup decisions
+<!-- IF:changelog -->
+- `CHANGELOG.md` — notable changes, recorded while you work
+<!-- ENDIF -->
+<!-- IF:adr -->
+- `docs/adr/` — architecture decision records
+<!-- ENDIF -->
 
 ## License
 

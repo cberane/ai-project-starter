@@ -53,8 +53,6 @@ Every `{{token}}` in a template is replaced with the corresponding answers value
 | `{{project_slug}}` | project_slug |
 | `{{one_liner}}` | one_liner |
 | `{{project_type}}` | project_type (humanized: `web_app` → `web app`) |
-| `{{language}}` | language |
-| `{{framework}}` | framework ("none" if empty) |
 | `{{language_framework}}` | `"<language> / <framework>"`, or just `"<language>"` if no framework |
 | `{{package_manager}}` | package_manager |
 | `{{cmd_build}}` | commands.build |
@@ -80,18 +78,21 @@ Templates contain `<!-- IF:condition -->…<!-- ENDIF -->` blocks. Expand (keep 
 | `IF:ci` | ci_enabled |
 | `IF:feature_branches` | git_rules.branch_policy == feature_branches |
 | `IF:no_attribution` | git_rules.no_ai_attribution |
-| `IF:changelog` / `IF:adr` | docs_level standard/full |
+| `IF:changelog` | docs_level is standard or full |
+| `IF:adr` | docs_level is full |
+| `IF:ignore_answers` | commit_answers is false — include the `.project-setup/` line in the `.gitignore` marked block |
 | `IF:role_ui_designer` | agent_roles includes ui_designer |
 | `IF:role_file_worker` | agent_roles includes file_worker |
 | `IF:role_code_reviewer` | agent_roles includes code_reviewer |
 | `IF:role_devops` | agent_roles includes devops |
 | `IF:lang_javascript` | language in [javascript, typescript] |
 | `IF:lang_python` | language == python |
-| `IF:lang_go` / `IF:lang_rust` | language == go / rust |
-| `IF:harness_claude` | harnesses includes claude |
-| `IF:harness_vibe` | harnesses includes vibe |
+| `IF:lang_go` | language == go |
+| `IF:lang_rust` | language == rust |
 | `IF:review_before_commit` | quality_gates.review_before_commit |
 | `IF:security_review_on_request` | quality_gates.security_review == on_request |
+
+Harness selection is **not** a template condition: which harness-specific files are generated (e.g. `CLAUDE.md`) is decided by the file plan in `references/apply.md`.
 
 ## ELSE blocks
 
@@ -102,6 +103,6 @@ Templates contain `<!-- IF:condition -->…<!-- ENDIF -->` blocks. Expand (keep 
 ## Rendering rules
 
 1. Replace tokens **first**, then evaluate conditionals (so conditions and contents never interact).
-2. After rendering, strip every remaining rendering comment (`<!-- IF:… -->`, `<!-- ENDIF -->`, and any `<!-- NOTE: … -->` guidance comments in templates).
+2. After rendering, strip every remaining rendering comment (`<!-- IF:… -->`, `<!-- ENDIF -->`, and any `<!-- NOTE: … -->` or `# NOTE: …` guidance comments in templates).
 3. Never leave a `{{token}}` or an `IF` marker in a generated file. If one survives because an answer is missing, **stop and ask** — do not guess.
-4. Generated files are prose with placeholders, not literal string substitution only: fit surrounding sentences to the answer (e.g. drop "using {{framework}}" when framework is "none").
+4. Generated files are prose with placeholders, not literal string substitution only: fit surrounding sentences to the answer (e.g. `{{language_framework}}` renders without the framework part when framework is "none").

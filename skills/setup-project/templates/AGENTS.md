@@ -112,6 +112,16 @@ GitHub Actions runs on every push and PR: {{ci_jobs}}. Keep the workflow file (`
 CI is intentionally disabled for this project.
 <!-- ENDIF -->
 
+## Documentation
+
+<!-- IF:changelog -->
+- Keep [CHANGELOG.md](CHANGELOG.md) current while you work: record notable changes under `[Unreleased]` (Added / Changed / Fixed). Never leave a notable change unrecorded.
+<!-- ENDIF -->
+<!-- IF:adr -->
+- Architecture decisions live in `docs/adr/`: copy `docs/adr/TEMPLATE.md` to `docs/adr/NNNN-short-title.md` and record the decision, its context, and its consequences. Never rewrite an accepted ADR — supersede it with a new one.
+<!-- ENDIF -->
+- Documentation is English only and lives next to the truth it describes.
+
 ## File conventions
 
 - Specs and plans are the only place where requirements live — do not scatter them across code comments.
