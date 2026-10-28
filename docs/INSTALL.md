@@ -25,7 +25,7 @@ npx github:cberane/ai-project-starter#main
 or clear the npx cache (`npx clear-npx-cache`, or remove `~/.npm/_npx`). For a stable pin, use a tag:
 
 ```bash
-npx github:cberane/ai-project-starter#v0.2.0
+npx github:cberane/ai-project-starter#v0.2.1
 ```
 
 ## Manual clone

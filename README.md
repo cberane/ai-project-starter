@@ -29,7 +29,7 @@ npx github:cberane/ai-project-starter
 No npm publish required — `npx` clones the repo and runs the installer directly. To pin a stable version, use a tag:
 
 ```bash
-npx github:cberane/ai-project-starter#v0.2.0
+npx github:cberane/ai-project-starter#v0.2.1
 ```
 
 ### Manual clone

@@ -1,6 +1,6 @@
 {
   "name": "ai-project-starter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Interactive /setup-project skill that configures AI-assisted, spec-driven projects in any coding harness",
   "bin": {
     "ai-project-starter": "bin/ai-project-starter.js"
