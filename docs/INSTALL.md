@@ -25,7 +25,7 @@ npx github:cberane/ai-project-starter#main
 or clear the npx cache (`npx clear-npx-cache`, or remove `~/.npm/_npx`). For a stable pin, use a tag:
 
 ```bash
-npx github:cberane/ai-project-starter#v0.1.1
+npx github:cberane/ai-project-starter#v0.2.0
 ```
 
 ## Manual clone
@@ -41,7 +41,13 @@ node ai-project-starter/bin/ai-project-starter.js /path/to/your/project
 curl -fsSL https://raw.githubusercontent.com/cberane/ai-project-starter/main/install.sh | sh
 ```
 
-Run from the project root; it clones to a temp dir and copies the skill in.
+Run from the project root; it clones to a temp dir and copies the skill in. It installs the latest **tagged release** (falling back to `main` if the tag is not fetchable yet) and accepts an optional target directory:
+
+```bash
+sh install.sh /path/to/project
+```
+
+The shell fallback supports only `[target-dir]` — the flags below apply to the Node installer (npx / manual clone) only. Where the existing skill cannot be recognized (no readable version file), it is moved aside to a `.backup-<timestamp>` directory instead of being overwritten.
 
 ## User-level install (dogfooding)
 
@@ -49,19 +55,21 @@ Run from the project root; it clones to a temp dir and copies the skill in.
 npx github:cberane/ai-project-starter --user
 ```
 
-Installs to `~/.claude/skills/setup-project/` and `~/.vibe/skills/setup-project/` — the skill is then available in **all** your projects, not just one. Re-running updates in place; a version change upgrades without prompting.
+Installs to `~/.claude/skills/setup-project/` and `~/.vibe/skills/setup-project/` — the skill is then available in **all** your projects, not just one. Re-running updates in place; a version change upgrades without prompting. Upgrades replace the skill directory wholesale — local edits to the installed skill are overwritten. A target path passed alongside `--user` is ignored.
 
 ## Flags
+
+Node installer only (see [Without Node](#without-node) for the shell fallback):
 
 | Flag | Effect |
 |------|--------|
 | `[path]` | Target directory (default: current directory) |
 | `--user` | Install to user-level skill dirs instead of a project |
 | `--harness claude\|vibe\|all` | Override harness detection |
-| `--detect-only` | Print detected harnesses, install nothing |
+| `--detect-only` | Print detected harnesses (never prompts), install nothing |
 | `--force` | Overwrite an existing skill directory without prompting |
 | `--version` | Print the skill version |
-| `--help` | Usage |
+| `-h, --help` | Usage |
 
 ## After installing
 
