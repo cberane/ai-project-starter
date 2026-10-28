@@ -8,6 +8,30 @@ Versioning rules and the release procedure live in [AGENTS.md](AGENTS.md).
 
 ## [Unreleased]
 
+### Added
+
+- The `docs_level` answer now has real effect: `standard` and `full` generate a `CHANGELOG.md` stub; `full` additionally generates `docs/adr/TEMPLATE.md`. The generated `AGENTS.md` and `README.md` gain matching documentation rules and layout entries.
+- New `IF:ignore_answers` condition: the `.project-setup/` gitignore line is generated from a declared marker in `gitignore.append` instead of being left to the renderer.
+- Language-specific `.gitignore` blocks for Go and Rust (`IF:lang_go`, `IF:lang_rust` now used).
+- `npm run check` / `npm test` scripts, an `author` field, and `docs/` + `CHANGELOG.md` in the npm `files` list.
+- CI: version-sync check (`package.json` == `references/VERSION` == README/INSTALL pins), upgrade-path smoke test (planted old version must be replaced, stale files pruned), non-interactive `--detect-only` test, `--force` test, user-level install test, and a functional `install.sh` run; the English-only check now covers the root `README.md`, `AGENTS.md`, `CLAUDE.md`, and `CHANGELOG.md` too.
+- `scripts/check.mjs` now also flags declared-but-unused tokens and conditions, `ELSE` markers outside or duplicated within a block, and undeclared `{{…}}` placeholders in the references.
+
+### Changed
+
+- **Breaking:** installer upgrades replace the skill directory wholesale via an atomic temp-dir swap — local edits to an installed skill are overwritten, and files removed upstream no longer linger. This matches the `install.sh` semantics. A failed copy can no longer leave a half-installed skill that a later version check would mistake for complete.
+- Version changes are labeled honestly: downgrades print as `downgraded`, not `upgraded`.
+- `install.sh` installs the latest **tagged release** (falls back to `main` if the tag is not fetchable), validates the target directory, and moves an unrecognized existing skill aside to a `.backup-<timestamp>` directory instead of deleting it.
+- Removed dead declarations: tokens `{{language}}`/`{{framework}}` and conditions `IF:harness_claude`/`IF:harness_vibe` (harness-specific files are chosen by the apply file plan); the generated README quickstart uses `{{cmd_install}}` (e.g. `npm ci`) instead of always `{{package_manager}} install`.
+- `docs/INSTALL.md` marks the flags as Node-installer-only and documents `install.sh [target-dir]`.
+
+### Fixed
+
+- `--detect-only` no longer prompts when no harness is detected; it prints `none detected`.
+- Ctrl+C during an installer question aborts the install instead of silently taking the default answer.
+- A stray `.claude`/`.vibe` **file** no longer counts as a detected harness directory; a second positional path and single-dash option typos (e.g. `-user`) fail with a clear error; `--user` combined with a path prints a notice instead of silently ignoring it.
+- The AGENTS.md verification checklist is no longer self-contradictory: the attribution grep is anchored (matching CI) so the rule text itself does not trip it, and the checklist now includes `node scripts/check.mjs` and the extended smoke tests.
+
 ## [0.1.1] - 2026-10-27
 
 ### Fixed

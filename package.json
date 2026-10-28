@@ -1,6 +1,6 @@
 {
   "name": "ai-project-starter",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Interactive /setup-project skill that configures AI-assisted, spec-driven projects in any coding harness",
   "bin": {
     "ai-project-starter": "bin/ai-project-starter.js"
@@ -9,16 +9,23 @@
     "bin/",
     "skills/",
     "install.sh",
+    "docs/",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node scripts/check.mjs && node --check bin/ai-project-starter.js && bash -n install.sh"
+  },
   "engines": {
     "node": ">=18"
   },
   "license": "MIT",
+  "author": "Cristoph Berane",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/cberane/ai-project-starter.git"
+    "url": "https://github.com/cberane/ai-project-starter.git"
   },
   "keywords": [
     "ai",
