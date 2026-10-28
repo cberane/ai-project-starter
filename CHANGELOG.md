@@ -8,6 +8,8 @@ Versioning rules and the release procedure live in [AGENTS.md](AGENTS.md).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-28
+
 ### Added
 
 - The `docs_level` answer now has real effect: `standard` and `full` generate a `CHANGELOG.md` stub; `full` additionally generates `docs/adr/TEMPLATE.md`. The generated `AGENTS.md` and `README.md` gain matching documentation rules and layout entries.
