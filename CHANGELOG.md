@@ -8,6 +8,12 @@ Versioning rules and the release procedure live in [AGENTS.md](AGENTS.md).
 
 ## [Unreleased]
 
+### Added
+
+- `SECURITY.md`: supported-versions policy (pre-1.0 — latest release and `main` only), private vulnerability reporting channel, in-scope/out-of-scope guidance tailored to a file-copying installer (writes outside the target, symlink/path-traversal handling, template content that could inject into a user's project or agent session, CI injection, supply chain), and supply-chain notes.
+- GitHub issue templates (`.github/ISSUE_TEMPLATE/`): bug-report and feature-request forms tailored to the project (install method, `--version` output, harness, pre-flight checks; feature requests pick the touched area per the architecture rules). The contact-links config routes security reports to private disclosure and questions to Discussions; blank issues are disabled.
+- README links the security policy from the Contributing section.
+
 ## [0.2.0] - 2026-10-28
 
 ### Added

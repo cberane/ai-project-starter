@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest a new flag, interview question, template, or harness
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before proposing a new harness, check the design rules in [AGENTS.md](../blob/main/AGENTS.md) — harness support is data, not logic.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: The situation or friction today. Not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like instead?
+      description: The behavior you want, and how it fits the existing flow.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part does this touch?
+      options:
+        - Installer (bin/ai-project-starter.js, install.sh)
+        - Skill interview (questions, flow)
+        - Templates (AGENTS.md, specs, roles, CI stub)
+        - Harness support (new harness)
+        - Docs
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Workarounds you tried, or other designs you rejected.

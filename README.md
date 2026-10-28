@@ -95,6 +95,8 @@ Read [docs/DESIGN.md](docs/DESIGN.md) for the full architecture, the interview c
 
 Work on this repository happens with the same AI-assisted workflow it produces. See [AGENTS.md](AGENTS.md) for the rules agents follow in this repo (they mirror what the skill generates).
 
+Found a security issue? Please report it privately — see [SECURITY.md](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE)
